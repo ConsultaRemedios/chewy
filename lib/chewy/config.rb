@@ -174,7 +174,9 @@ module Chewy
     def yaml_options
       @yaml_options ||= begin
         if defined?(Rails)
-          file = Rails.root.join(*%w(config chewy.yml))
+          # file = Rails.root.join(*%w(config chewy.yml))  TODO
+          file = open( 'config/chewy.yml')
+
           if File.exists?(file)
             yaml = ERB.new(File.read(file)).result
             YAML.load(yaml)[Rails.env].try(:deep_symbolize_keys)
