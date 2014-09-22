@@ -29,6 +29,14 @@ ActiveSupport.on_load(:active_record) do
   extend Chewy::Type::Observe::ActiveRecordMethods
 end
 
+ActiveSupport.on_load(:mongoid) do
+  include Chewy::Type::Observe::MongoidMethods
+  
+  module Mongoid::Document::ClassMethods
+    include Chewy::Type::Observe::ClassMethods
+  end
+end
+
 module Chewy
   def self.derive_type name
     return name if name.is_a?(Class) && name < Chewy::Type
@@ -49,11 +57,17 @@ module Chewy
   def self.create_type index, target, options = {}, &block
     type = Class.new(Chewy::Type)
 
-    adapter = if (target.is_a?(Class) && target < ActiveRecord::Base) || target.is_a?(::ActiveRecord::Relation)
-      Chewy::Type::Adapter::ActiveRecord.new(target, options)
-    else
-      Chewy::Type::Adapter::Object.new(target, options)
-    end
+    
+
+    # adapter = if (target.is_a?(Class) && target < ActiveRecord::Base) || target.is_a?(::ActiveRecord::Relation)
+    #   Chewy::Type::Adapter::ActiveRecord.new(target, options)
+    # elsif true
+    #   Chewy::Type::Adapter::Mongoid.new(target, options)
+    # else
+    #   Chewy::Type::Adapter::Object.new(target, options)
+    # end
+
+    adapter = Chewy::Type::Adapter::Mongoid.new(target, options)
 
     index.const_set(adapter.name, type)
     type.send(:define_singleton_method, :index) { index }
