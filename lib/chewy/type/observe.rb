@@ -10,7 +10,6 @@ module Chewy
 
           update = Proc.new do
             update_options = options.reverse_merge(urgent: Chewy.urgent_update)
-            clear_association_cache if update_options[:urgent]
 
             backreference = if method && method.to_s == 'self'
               self
@@ -23,8 +22,8 @@ module Chewy
             Chewy.derive_type(type_name).update_index(backreference, update_options)
           end
 
-          after_save &update
-          after_destroy &update
+          self.class.set_callback :save, :after, update
+          self.class.set_callback :destroy, :after, update
         end
       end
 
