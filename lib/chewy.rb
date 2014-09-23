@@ -37,12 +37,17 @@ ActiveSupport.on_load(:mongoid) do
   end
 end
 
+# TODO
+# adicionar suporte a modularização do indice CrCore::Indexes::OffersIndex
+# verificar como adicionar os callbacks no mongoid
+# implementar de forma definitiva todas as modificações feitas para a lib funcionar
+
 module Chewy
   def self.derive_type name
     return name if name.is_a?(Class) && name < Chewy::Type
 
     index_name, type_name = name.split('#', 2)
-    class_name = "#{index_name.camelize}Index"
+    class_name = "CrCore::Indexes::#{index_name.camelize}Index"
     index = class_name.safe_constantize
     raise Chewy::UnderivableType.new("Can not find index named `#{class_name}`") unless index && index < Chewy::Index
     type = if type_name.present?
