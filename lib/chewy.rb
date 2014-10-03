@@ -62,17 +62,13 @@ module Chewy
   def self.create_type index, target, options = {}, &block
     type = Class.new(Chewy::Type)
 
-    
-
-    # adapter = if (target.is_a?(Class) && target < ActiveRecord::Base) || target.is_a?(::ActiveRecord::Relation)
-    #   Chewy::Type::Adapter::ActiveRecord.new(target, options)
-    # elsif true
-    #   Chewy::Type::Adapter::Mongoid.new(target, options)
-    # else
-    #   Chewy::Type::Adapter::Object.new(target, options)
-    # end
-
-    adapter = Chewy::Type::Adapter::Mongoid.new(target, options)
+    adapter = if defined?(ActiveRecord) && (target.is_a?(Class) && (target < ActiveRecord::Base) || target.is_a?(::ActiveRecord::Relation))
+      Chewy::Type::Adapter::ActiveRecord.new(target, options)
+    elsif defined?(Mongoid) && target < Mongoid::Document
+      Chewy::Type::Adapter::Mongoid.new(target, options)
+    else
+      Chewy::Type::Adapter::Object.new(target, options)
+    end
 
     index.const_set(adapter.name, type)
     type.send(:define_singleton_method, :index) { index }
