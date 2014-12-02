@@ -26,9 +26,12 @@ module Chewy
         def import *args, &block
           import_options = args.extract_options!
           batch_size = import_options.delete(:batch_size) || BATCH_SIZE
-          # objects = args.flatten
-          objects = @target.entries
-
+          
+          if args
+            objects = args.flatten
+          else
+            objects = @target.entries
+          end
 
           objects.in_groups_of(batch_size, false).map do |group|
             action_groups = group.group_by do |object|

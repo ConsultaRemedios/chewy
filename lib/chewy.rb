@@ -30,10 +30,9 @@ ActiveSupport.on_load(:active_record) do
 end
 
 ActiveSupport.on_load(:mongoid) do
-  include Chewy::Type::Observe::MongoidMethods
-  
+  include Chewy::Type::Observe::ClassMethods
   module Mongoid::Document::ClassMethods
-    include Chewy::Type::Observe::ClassMethods
+    include Chewy::Type::Observe::MongoidMethods
   end
 end
 

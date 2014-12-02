@@ -22,8 +22,8 @@ module Chewy
             Chewy.derive_type(type_name).update_index(backreference, update_options)
           end
 
-          self.class.set_callback :save, :after, update
-          self.class.set_callback :destroy, :after, update
+          self.set_callback :save, :after, update
+          self.set_callback :destroy, :after, update
         end
       end
 
