@@ -27,10 +27,10 @@ module Chewy
           import_options = args.extract_options!
           batch_size = import_options.delete(:batch_size) || BATCH_SIZE
           
-          if !args.empty?
-            objects = args.flatten
-          else
+          if args.empty?
             objects = @target.entries
+          else
+            objects = args.flatten
           end
 
           objects.in_groups_of(batch_size, false).map do |group|
