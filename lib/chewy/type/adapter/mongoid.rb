@@ -27,7 +27,7 @@ module Chewy
           import_options = args.extract_options!
           batch_size = import_options.delete(:batch_size) || BATCH_SIZE
           
-          if args
+          if !args.empty?
             objects = args.flatten
           else
             objects = @target.entries
